@@ -3,14 +3,14 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) throws Exception {
         // TODO: Uncomment the code below to pass the first stage
-         System.out.print("$ ");
+        System.out.print("$ ");
 
-        Scanner input = new Scanner(System.in);
+        // Captures the user's command in the "command" variable
+        Scanner scanner = new Scanner(System.in);
+        String command = scanner.nextLine();
 
-        String comandos = input.nextLine();
+        // Prints the "<command>: command not found" message
+        System.out.println(command + ": command not found");
 
-        System.out.println( comandos + ", command not found ");
-
-        input.close();
     }
 }
