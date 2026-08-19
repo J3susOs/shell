@@ -28,11 +28,14 @@ public class Main {
             } else if (command.startsWith("type ") && (command.endsWith("echo") || command.endsWith("exit") || command.endsWith("type"))) {
                 String a = command.replace("type ", "");
                 System.out.println(a + " is a shell builtin");
+                System.exit(0);
             } else if (command.startsWith("type ")) {
                 String a = command.replace("type ", "");
                 System.out.println(a + ": not found");
+                System.exit(0);
             } else {
                 System.out.println(command + ": command not found");
+                System.exit(0);
             }
 
         }
