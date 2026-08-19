@@ -25,10 +25,11 @@ public class Main {
             if (command.startsWith("echo ")) {
                 String texto = command.replace("echo ", "");
                 System.out.println(texto);
-            } else if (command.startsWith("type ") && (command.endsWith("echo") || command.endsWith("exit") || command.endsWith("type")))
-            {
+            } else if (command.startsWith("type ") && (command.endsWith("echo") || command.endsWith("exit") || command.endsWith("type"))) {
                 String a = command.replace("type ", "");
                 System.out.println(a + " is a shell builtin");
+            } else if (command.startsWith("type ")) {
+                System.out.println(" invalid command: not found");
             } else {
                 System.out.println(command + ": command not found");
             }
