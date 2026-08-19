@@ -30,7 +30,7 @@ public class Main {
                 System.out.println(a + " is a shell builtin");
             } else if (command.startsWith("type ")) {
                 String a = command.replace("type ", "");
-                System.out.println(command + " invalid command: not found");
+                System.out.println(command + ": not found");
             } else {
                 System.out.println(command + ": command not found");
             }
