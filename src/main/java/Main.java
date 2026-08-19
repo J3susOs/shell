@@ -39,6 +39,18 @@ public class Main {
                         System.out.println(commandType + ": not found");
                     }
                 }
+            } else if (command.startsWith("custom_exe_")) {
+                String path = System.getenv("PATH");
+                String[] directories = path.split(File.pathSeparator);
+
+                for (String directory : directories) {
+                    Path filePath = Path.of(directory, command);
+
+                    if (Files.exists(filePath) && Files.isExecutable(filePath)) {
+                        System.out.println(command + " se recibio un parametro");
+                        break;
+                    }
+                }
             } else if (command.startsWith("echo ")) {
                 System.out.println(command.substring(5));
             } else {
