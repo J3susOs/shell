@@ -22,20 +22,21 @@ public class Main {
                 System.exit(0);
             }
             // Si se recibe un echo se imprime como cadena de texto lo siguiente
-            if (command.startsWith("echo ")) {
+            else if (command.startsWith("echo ")) {
                 String texto = command.replace("echo ", "");
                 System.out.println(texto);
             }
 
-            if (command.startsWith("type ") && (command.endsWith("echo") || command.endsWith("exit") || command.endsWith("type"))) {
+            else if (command.startsWith("type ") && (command.endsWith("echo") || command.endsWith("exit") || command.endsWith("type"))) {
                 String a = command.replace("type ", "");
                 System.out.println(a + " is a shell builtin");
             } else if (command.startsWith("type ")) {
                 String a = command.replace("type ", "");
                 System.out.println(a + ": not found");
             }
-
-            System.out.println(command + ": command not found");
+            else {
+                System.out.println(command + ": command not found");
+            }
         }
 
     }
