@@ -12,18 +12,23 @@ public class Main {
 
         // Prints the "<command>: command not found" message
         //System.out.println(command + ": command not found");
-        String echo = "echo ";
 
         while (true) {
             System.out.print("$ ");
             String command = scanner.nextLine();
 
-            if  (command.equals("exit")) {
+            // Si recibe el comando de exit el programa se cierra
+            if (command.equals("exit ")) {
                 System.exit(0);
             }
-            if (command.startsWith(echo)) {
-                String texto = command.replace(echo, "");
+
+            if (command.startsWith("echo ")) {
+                String texto = command.replace("echo ", "");
                 System.out.println(texto);
+            } else if (command.startsWith("type ") && (command.endsWith("echo") || command.endsWith("exit") || command.endsWith("type")))
+            {
+                String a = command.replace("type ", "");
+                System.out.println(a + " is a shell builtin");
             } else {
                 System.out.println(command + ": command not found");
             }
