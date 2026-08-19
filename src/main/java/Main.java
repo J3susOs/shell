@@ -27,6 +27,8 @@ public class Main {
                         Path filePath = Path.of(directory, commandType);
 
                         if (Files.exists(filePath) && Files.isExecutable(filePath)) {
+                            ProcessBuilder pb = new ProcessBuilder(directory, commandType);
+                            Process process = pb.start();
                             System.out.println(commandType + " is " + filePath);
                             found = true;
                             break;
