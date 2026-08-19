@@ -1,48 +1,52 @@
+import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        // TODO: Uncomment the code below to pass the first stage
-
-
-        // Captures the user's command in the "command" variable
         Scanner scanner = new Scanner(System.in);
-        //String command = scanner.nextLine();
+        List<String> builtins = List.of("echo", "exit", "type");
 
-        // Prints the "<command>: command not found" message
-        //System.out.println(command + ": command not found");Path rutaAbsoluta = Paths.get("C:\\Users\\Documents\\archivo.txt");
+        System.out.print("$ ");
+        String command = scanner.nextLine();
 
+        while (!command.equals("exit")) {
 
-        Path rutaAbsoluta = Paths.get("/bin/cat");
+            if (command.startsWith("type ")) {
+                String commandType = command.substring(5);
 
+                if (builtins.contains(commandType)) {
+                    System.out.println(commandType + " is a shell builtin");
+                } else {
+                    String path = System.getenv("PATH");
+                    String[] directories = path.split(":");
+                    boolean found = false;
 
-        while (true) {
-            System.out.print("$ ");
-            String command = scanner.nextLine();
+                    for (String directory : directories) {
+                        Path filePath = Path.of(directory, commandType);
 
-            // Si recibe el comando de exit el programa se cierra
-            if (command.equals("exit")) {
-                System.exit(0);
-            }
-            // Si se recibe un echo se imprime como cadena de texto lo siguiente
-            else if (command.startsWith("echo ")) {
-                String texto = command.replace("echo ", "");
-                System.out.println(texto);
-            }
+                        if (Files.exists(filePath) && Files.isExecutable(filePath)) {
+                            System.out.println(commandType + " is " + filePath);
+                            found = true;
+                            break;
+                        }
+                    }
 
-            else if (command.startsWith("type ") && (command.endsWith("echo") || command.endsWith("exit") || command.endsWith("type"))) {
-                String a = command.replace("type ", "");
-                System.out.println(a + " is a shell builtin");
-            } else if (command.startsWith("type ")) {
-                String a = command.replace("type ", "");
-                System.out.println(a + ": not found");
-            }
-            else {
+                    if (!found) {
+                        System.out.println(commandType + ": not found");
+                    }
+                }
+
+            } else if (command.startsWith("echo ")) {
+                System.out.println(command.substring(5));
+
+            } else {
                 System.out.println(command + ": command not found");
             }
-        }
 
+            System.out.print("$ ");
+            command = scanner.nextLine();
+        }
     }
 }
