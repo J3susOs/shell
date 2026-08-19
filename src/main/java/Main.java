@@ -12,11 +12,12 @@ public class Main {
 
         // Prints the "<command>: command not found" message
         //System.out.println(command + ": command not found");
-        String p = "";
-        while (!Objects.equals(p, "exit")) {
+        while (true) {
             System.out.print("$ ");
             String command = scanner.nextLine();
-            p = command;
+            if  (command.equals("exit")) {
+                System.exit(0);
+            }
             System.out.println(command + ": command not found");
 
         }
