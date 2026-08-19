@@ -18,26 +18,24 @@ public class Main {
             String command = scanner.nextLine();
 
             // Si recibe el comando de exit el programa se cierra
-            if (command.equals("exit ")) {
+            if (command.equals("exit")) {
                 System.exit(0);
             }
-
+            // Si se recibe un echo se imprime como cadena de texto lo siguiente
             if (command.startsWith("echo ")) {
                 String texto = command.replace("echo ", "");
                 System.out.println(texto);
-            } else if (command.startsWith("type ") && (command.endsWith("echo") || command.endsWith("exit") || command.endsWith("type"))) {
+            }
+
+            if (command.startsWith("type ") && (command.endsWith("echo") || command.endsWith("exit") || command.endsWith("type"))) {
                 String a = command.replace("type ", "");
                 System.out.println(a + " is a shell builtin");
-                System.exit(0);
             } else if (command.startsWith("type ")) {
                 String a = command.replace("type ", "");
                 System.out.println(a + ": not found");
-                System.exit(0);
-            } else {
-                System.out.println(command + ": command not found");
-                System.exit(0);
             }
 
+            System.out.println(command + ": command not found");
         }
 
     }
