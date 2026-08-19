@@ -1,4 +1,5 @@
-import java.util.Objects;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Scanner;
 
 public class Main {
@@ -11,7 +12,11 @@ public class Main {
         //String command = scanner.nextLine();
 
         // Prints the "<command>: command not found" message
-        //System.out.println(command + ": command not found");
+        //System.out.println(command + ": command not found");Path rutaAbsoluta = Paths.get("C:\\Users\\Documents\\archivo.txt");
+
+
+        Path rutaAbsoluta = Paths.get("/bin/cat");
+
 
         while (true) {
             System.out.print("$ ");
