@@ -1,3 +1,4 @@
+import java.util.Objects;
 import java.util.Scanner;
 
 public class Main {
@@ -11,12 +12,13 @@ public class Main {
 
         // Prints the "<command>: command not found" message
         //System.out.println(command + ": command not found");
-
-        int i = 1;
-        while (i > 0) {
+        String p = "";
+        while (!Objects.equals(p, "exit")) {
             System.out.print("$ ");
             String command = scanner.nextLine();
             System.out.println(command + ": command not found");
+            p = command;
+            System.out.println(p + ": command not found");
         }
 
     }
