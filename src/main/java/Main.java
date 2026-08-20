@@ -8,7 +8,7 @@ public class Main {
     static void main(String[] args) throws Exception {
         Scanner scanner = new Scanner(System.in);
         List<String> builtins = List.of("echo", "exit", "type", "pwd", "cd");
-        Path currentDir = Path.of(System.getProperty("user.dir"));
+        Path pathdirectory = Path.of(System.getProperty("user.dir"));
 
         System.out.print("$ ");
         String command = scanner.nextLine();
@@ -47,14 +47,16 @@ public class Main {
                 System.out.println(command.substring(5));
             }
             else if(command.equals("pwd")) {
-                System.out.println(currentDir);
+                System.out.println(pathdirectory);
             }else if (command.startsWith("cd ")) {
-
-                currentDir = Path.of(command.substring(3));
-
-                System.setProperty("user.dir", currentDir.toString());
-
-                System.out.println(System.getProperty("user.dir"));
+                pathdirectory = Path.of(command.substring(3));
+                if (Files.exists(pathdirectory) && Files.isExecutable(pathdirectory)) {
+                    System.setProperty("user.dir", pathdirectory.toString());
+                }else if (Files.exists(pathdirectory)) {
+                    System.out.println("La ruta existe pero es un archivo, no un directorio");
+                } else {
+                    System.out.println("No ruta no existe");
+                }
             }
             // 3. Fallback: Si no es builtin, intentamos ejecutarlo como programa externo
             else if (!command.isBlank()) {
