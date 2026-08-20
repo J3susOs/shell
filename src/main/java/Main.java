@@ -47,7 +47,23 @@ public class Main {
             }
             else if(command.startsWith("pwd")) {
                 String path = System.getenv("PATH");
-                System.out.println(path);
+                if (path != null) {
+                    String[] directories = path.split(File.pathSeparator);
+                    boolean found = false;
+
+                    for (String directory : directories) {
+                        Path filePath = Path.of(directory, command);
+
+                        if (Files.exists(filePath) && Files.isExecutable(filePath)) {
+                            System.out.println(command + " is " + filePath);
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        System.out.println(command + ": not found");
+                    }
+                }
             }
             // 3. Fallback: Si no es builtin, intentamos ejecutarlo como programa externo
             else if (!command.isBlank()) {
