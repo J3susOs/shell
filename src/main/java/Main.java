@@ -55,7 +55,7 @@ public class Main {
                 //}else if (Files.exists(pathdirectory)) {
                 //    System.out.println("La ruta existe pero es un archivo, no un directorio");
                 } else {
-                    System.out.println("cd /does_not_exist");
+                    System.out.println("cd: /does_not_exist: No such file or directory");
                 }
             }
             // 3. Fallback: Si no es builtin, intentamos ejecutarlo como programa externo
