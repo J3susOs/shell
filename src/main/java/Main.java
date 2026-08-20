@@ -84,7 +84,10 @@ public class Main {
                     System.out.println(command + ": command not found");
                 }
             }
-
+            else if(command.startsWith("pwd")) {
+                String path = System.getenv("PATH");
+                System.out.println(path);
+            }
             System.out.print("$ ");
             command = scanner.nextLine();
         }
