@@ -8,6 +8,7 @@ public class Main {
     static void main(String[] args) throws Exception {
         Scanner scanner = new Scanner(System.in);
         List<String> builtins = List.of("echo", "exit", "type", "pwd");
+        Path currentDir = Path.of(System.getProperty("user.dir"));
 
         System.out.print("$ ");
         String command = scanner.nextLine();
@@ -45,9 +46,8 @@ public class Main {
             else if (command.startsWith("echo ")) {
                 System.out.println(command.substring(5));
             }
-            else if(command.startsWith("pwd")) {
-                String cwd = System.getProperty("user.dir");
-                System.out.println(cwd);
+            else if(command.equals("pwd")) {
+                System.out.println(currentDir);
             }
             // 3. Fallback: Si no es builtin, intentamos ejecutarlo como programa externo
             else if (!command.isBlank()) {
