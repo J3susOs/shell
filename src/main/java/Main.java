@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) throws Exception {
+    static void main(String[] args) throws Exception {
         Scanner scanner = new Scanner(System.in);
         List<String> builtins = List.of("echo", "exit", "type", "pwd");
 
@@ -45,7 +45,7 @@ public class Main {
             else if (command.startsWith("echo ")) {
                 System.out.println(command.substring(5));
             }
-            else if(command.startsWith("PWD ")) {
+            else if(command.startsWith("pwd")) {
                 String cwd = System.getProperty("user.dir");
                 System.out.println(cwd);
             }
