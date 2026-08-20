@@ -45,9 +45,9 @@ public class Main {
             else if (command.startsWith("echo ")) {
                 System.out.println(command.substring(5));
             }
-            else if(command.startsWith("pwd ")) {
-                String path = System.getProperty("user.dir");
-                System.out.println(path);
+            else if(command.startsWith("PWD ")) {
+                String cwd = System.getProperty("user.dir");
+                System.out.println(cwd);
             }
             // 3. Fallback: Si no es builtin, intentamos ejecutarlo como programa externo
             else if (!command.isBlank()) {
