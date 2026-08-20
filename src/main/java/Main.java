@@ -7,7 +7,7 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) throws Exception {
         Scanner scanner = new Scanner(System.in);
-        List<String> builtins = List.of("echo", "exit", "type");
+        List<String> builtins = List.of("echo", "exit", "type", "pwd");
 
         System.out.print("$ ");
         String command = scanner.nextLine();
