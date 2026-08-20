@@ -55,7 +55,7 @@ public class Main {
                         Path filePath = Path.of(directory, command);
 
                         if (Files.exists(filePath) && Files.isExecutable(filePath)) {
-                            System.out.println(command + " is " + filePath);
+                            System.out.println(filePath);
                             found = true;
                             break;
                         }
