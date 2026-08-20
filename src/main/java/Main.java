@@ -48,9 +48,9 @@ public class Main {
             }
             else if(command.equals("pwd")) {
                 System.out.println(currentDir);
-            }else if (command.startsWith("cd")) {
+            }else if (command.startsWith("cd ")) {
 
-                currentDir = Path.of(command.substring(2));
+                currentDir = Path.of(command.substring(3));
 
                 System.setProperty("user.dir", currentDir.toString());
 
