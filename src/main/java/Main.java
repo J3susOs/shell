@@ -50,13 +50,13 @@ public class Main {
                 System.out.println(pathdirectory);
             }else if (command.startsWith("cd ")) {
                 pathdirectory = Path.of(command.substring(3));
-                if (Files.exists(pathdirectory) && Files.isExecutable(pathdirectory)) {
+                //if (Files.exists(pathdirectory) && Files.isExecutable(pathdirectory)) {
                     System.setProperty("user.dir", pathdirectory.toString());
-                }else if (Files.exists(pathdirectory)) {
-                    System.out.println("La ruta existe pero es un archivo, no un directorio");
-                } else {
-                    System.out.println("No ruta no existe");
-                }
+                //}else if (Files.exists(pathdirectory)) {
+                //    System.out.println("La ruta existe pero es un archivo, no un directorio");
+                //} else {
+                //    System.out.println("No ruta no existe");
+                //}
             }
             // 3. Fallback: Si no es builtin, intentamos ejecutarlo como programa externo
             else if (!command.isBlank()) {
