@@ -45,6 +45,10 @@ public class Main {
             else if (command.startsWith("echo ")) {
                 System.out.println(command.substring(5));
             }
+            else if(command.startsWith("pwd")) {
+                String path = System.getenv("PATH");
+                System.out.println(path);
+            }
             // 3. Fallback: Si no es builtin, intentamos ejecutarlo como programa externo
             else if (!command.isBlank()) {
                 // Separar el comando de sus argumentos (ej: "custom_exe arg1 arg2")
@@ -83,10 +87,6 @@ public class Main {
                 if (!found) {
                     System.out.println(command + ": command not found");
                 }
-            }
-            else if(command.startsWith("pwd")) {
-                String path = System.getenv("PATH");
-                System.out.println(path);
             }
             System.out.print("$ ");
             command = scanner.nextLine();
