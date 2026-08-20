@@ -46,8 +46,25 @@ public class Main {
                 System.out.println(command.substring(5));
             }
             else if(command.startsWith("pwd ")) {
-                String cwd = System.getProperty("user.dir");
-                System.out.println(cwd);
+                String commandType = command.substring(3);
+                String path = System.getenv("PATH");
+                if (path != null) {
+                    String[] directories = path.split(File.pathSeparator);
+                    boolean found = false;
+
+                    for (String directory : directories) {
+                        Path filePath = Path.of(directory, commandType);
+
+                        if (Files.exists(filePath) && Files.isExecutable(filePath)) {
+                            System.out.println(filePath);
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        System.out.println(commandType + ": not found");
+                    }
+                }
             }
             // 3. Fallback: Si no es builtin, intentamos ejecutarlo como programa externo
             else if (!command.isBlank()) {
