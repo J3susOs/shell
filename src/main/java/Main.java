@@ -1,6 +1,7 @@
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Scanner;
 
@@ -50,6 +51,12 @@ public class Main {
                 System.out.println(pathdirectory);
             }else if (command.startsWith("cd ")) {
 
+                if (command.equals("cd ~")) {
+                    String homePath = System.getenv("HOME");
+
+                    pathdirectory = Paths.get(homePath);
+
+                }else {
                 String target = command.substring(3).trim();
 
                 // Resolvemos la nueva ruta y la normalizamos (para manejar cosas como cd ../)
@@ -60,7 +67,7 @@ public class Main {
                 } else {
                     System.out.println("cd: /non-existing-directory: No such file or directory");
                 }
-            }
+            }}
             // 3. Fallback: Si no es builtin, intentamos ejecutarlo como programa externo
             else if (!command.isBlank()) {
                 // Separar el comando de sus argumentos (ej: "custom_exe arg1 arg2")
