@@ -49,11 +49,14 @@ public class Main {
             else if(command.equals("pwd")) {
                 System.out.println(pathdirectory);
             }else if (command.startsWith("cd ")) {
-                pathdirectory = Path.of(command.substring(3));
-                if (Files.exists(pathdirectory) && Files.isExecutable(pathdirectory)) {
-                    System.setProperty("user.dir", pathdirectory.toString());
-                //}else if (Files.exists(pathdirectory)) {
-                //    System.out.println("La ruta existe pero es un archivo, no un directorio");
+
+                String target = command.substring(3).trim();
+
+                // Resolvemos la nueva ruta y la normalizamos (para manejar cosas como cd ../)
+                Path newPath = pathdirectory.resolve(target).normalize();
+
+                if (Files.exists(newPath) && Files.isDirectory(newPath)) {
+                    pathdirectory = newPath; // ¡Actualizamos nuestro directorio virtual!
                 } else {
                     System.out.println("cd: /non-existing-directory: No such file or directory");
                 }
