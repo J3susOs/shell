@@ -2,113 +2,147 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 public class Main {
-    static void main(String[] args) throws Exception {
-        Scanner scanner = new Scanner(System.in);
-        List<String> builtins = List.of("echo", "exit", "type", "pwd", "cd");
-        Path pathdirectory = Path.of(System.getProperty("user.dir"));
 
-        System.out.print("$ ");
-        String command = scanner.nextLine();
+    public static class ShellContext {
+        Path currentDirectory = Path.of(System.getProperty("user.dir"));
+        final String[] pathDirectories = System.getenv("PATH").split(File.pathSeparator);
+        final Map<String, Command> registry = new HashMap<>();
 
-        while (!command.equals("exit")) {
-            // 1. Manejo del builtin 'type'
-            if (command.startsWith("type ")) {
-                String commandType = command.substring(5);
+        public Path findExecutableInPath(String commandName) {
+            for (String dir : pathDirectories) {
+                Path filePath = Path.of(dir, commandName);
+                if (Files.isRegularFile(filePath) && Files.isExecutable(filePath)) {
+                    return filePath;
+                }
+            }
+            return null;
+        }
+    }
 
-                if (builtins.contains(commandType)) {
-                    System.out.println(commandType + " is a shell builtin");
+    public interface Command {
+
+        boolean execute(String[] tokens, String rawInput, ShellContext context);
+    }
+
+
+    public static class ExitCommand implements Command {
+        @Override
+        public boolean execute(String[] tokens, String rawInput, ShellContext context) {
+            return false; // Detiene el bucle principal
+        }
+    }
+
+    public static class EchoCommand implements Command {
+        @Override
+        public boolean execute(String[] tokens, String rawInput, ShellContext context) {
+            System.out.println(rawInput.substring(5));
+            return true;
+        }
+    }
+
+    public static class PwdCommand implements Command {
+        @Override
+        public boolean execute(String[] tokens, String rawInput, ShellContext context) {
+            System.out.println(context.currentDirectory);
+            return true;
+        }
+    }
+
+    public static class CdCommand implements Command {
+        @Override
+        public boolean execute(String[] tokens, String rawInput, ShellContext context) {
+            if (tokens.length < 2 || tokens[1].equals("~")) {
+                context.currentDirectory = Paths.get(System.getenv("HOME"));
+                return true;
+            }
+
+            String target = rawInput.substring(3).trim();
+            Path newPath = context.currentDirectory.resolve(target).normalize();
+
+            if (Files.isDirectory(newPath)) {
+                context.currentDirectory = newPath;
+            } else {
+                System.out.println("cd: " + target + ": No such file or directory");
+            }
+            return true;
+        }
+    }
+
+    public static class TypeCommand implements Command {
+        @Override
+        public boolean execute(String[] tokens, String rawInput, ShellContext context) {
+            if (tokens.length < 2) return true;
+            String targetCommand = tokens[1];
+
+            if (context.registry.containsKey(targetCommand)) {
+                System.out.println(targetCommand + " is a shell builtin");
+                return true;
+            }
+
+            Path executablePath = context.findExecutableInPath(targetCommand);
+            if (executablePath != null) {
+                System.out.println(targetCommand + " is " + executablePath);
+            } else {
+                System.out.println(targetCommand + ": not found");
+            }
+            return true;
+        }
+    }
+
+    public static void main(String[] args) {
+        ShellContext context = new ShellContext();
+
+        context.registry.put("exit", new ExitCommand());
+        context.registry.put("echo", new EchoCommand());
+        context.registry.put("pwd", new PwdCommand());
+        context.registry.put("cd", new CdCommand());
+        context.registry.put("type", new TypeCommand());
+
+        try (Scanner scanner = new Scanner(System.in)) {
+            boolean running = true;
+
+            while (running) {
+                System.out.print("$ ");
+                String input = scanner.nextLine().trim();
+
+                if (input.isBlank()) continue;
+
+                String[] tokens = input.split("\\s+");
+                String commandName = tokens[0];
+
+                Command command = context.registry.get(commandName);
+
+                if (command != null) {
+                    running = command.execute(tokens, input, context);
                 } else {
-                    String path = System.getenv("PATH");
-                    if (path != null) {
-                        String[] directories = path.split(File.pathSeparator);
-                        boolean found = false;
-
-                        for (String directory : directories) {
-                            Path filePath = Path.of(directory, commandType);
-
-                            if (Files.exists(filePath) && Files.isExecutable(filePath)) {
-                                System.out.println(commandType + " is " + filePath);
-                                found = true;
-                                break;
-                            }
-                        }
-
-                        if (!found) {
-                            System.out.println(commandType + ": not found");
-                        }
-                    }
+                    executeExternalCommand(tokens, context);
                 }
             }
-            // 2. Manejo del builtin 'echo'
-            else if (command.startsWith("echo ")) {
-                System.out.println(command.substring(5));
-            }
-            else if(command.equals("pwd")) {
-                System.out.println(pathdirectory);
-            }else if (command.startsWith("cd ")) {
+        }
+    }
 
-                if (command.equals("cd ~")) {
-                    String homePath = System.getenv("HOME");
+    private static void executeExternalCommand(String[] tokens, ShellContext context) {
+        String programName = tokens[0];
+        Path executablePath = context.findExecutableInPath(programName);
 
-                    pathdirectory = Paths.get(homePath);
+        if (executablePath == null) {
+            System.out.println(programName + ": command not found");
+            return;
+        }
 
-                }else {
-                String target = command.substring(3).trim();
-
-                // Resolvemos la nueva ruta y la normalizamos (para manejar cosas como cd ../)
-                Path newPath = pathdirectory.resolve(target).normalize();
-
-                if (Files.exists(newPath) && Files.isDirectory(newPath)) {
-                    pathdirectory = newPath; // ¡Actualizamos nuestro directorio virtual!
-                } else {
-                    System.out.println("cd: /non-existing-directory: No such file or directory");
-                }
-            }}
-            // 3. Fallback: Si no es builtin, intentamos ejecutarlo como programa externo
-            else if (!command.isBlank()) {
-                // Separar el comando de sus argumentos (ej: "custom_exe arg1 arg2")
-                String[] tokens = command.split(" ");
-                String programName = tokens[0]; // El primer elemento es el programa
-
-                String path = System.getenv("PATH");
-                boolean found = false;
-
-                if (path != null) {
-                    String[] directories = path.split(File.pathSeparator);
-
-                    for (String directory : directories) {
-                        Path filePath = Path.of(directory, programName);
-
-                        if (Files.exists(filePath) && Files.isExecutable(filePath)) {
-                            found = true;
-
-                            // ¡Aquí ocurre la magia de la ejecución!
-                            // Le pasamos el arreglo 'tokens' completo al ProcessBuilder
-                            ProcessBuilder pb = new ProcessBuilder(tokens);
-
-                            // Conectamos la salida del programa a nuestra consola
-                            pb.inheritIO();
-
-                            // Iniciamos el subproceso y esperamos a que termine
-                            Process process = pb.start();
-                            process.waitFor();
-
-                            break; // Salimos del for porque ya lo encontramos y ejecutamos
-                        }
-                    }
-                }
-
-                // Si recorrimos todo el PATH y no estaba:
-                if (!found) {
-                    System.out.println(command + ": command not found");
-                }
-            }
-            System.out.print("$ ");
-            command = scanner.nextLine();
+        try {
+            ProcessBuilder pb = new ProcessBuilder(tokens);
+            pb.directory(context.currentDirectory.toFile());
+            pb.inheritIO();
+            Process process = pb.start();
+            process.waitFor();
+        } catch (Exception e) {
+            System.out.println("Error executing command: " + e.getMessage());
         }
     }
 }
