@@ -26,20 +26,21 @@ public class Main {
 
     public interface Command {
 
-        boolean execute(String[] tokens, String rawInput, ShellContext context);
+        boolean execute(String[] tokens, String rawInput, ShellContext context, String space);
     }
 
 
     public static class ExitCommand implements Command {
         @Override
-        public boolean execute(String[] tokens, String rawInput, ShellContext context) {
+        public boolean execute(String[] tokens, String rawInput, ShellContext context, String space) {
             return false; // Detiene el bucle principal
         }
     }
 
     public static class EchoCommand implements Command {
         @Override
-        public boolean execute(String[] tokens, String rawInput, ShellContext context) {
+        public boolean execute(String[] tokens, String rawInput, ShellContext context,  String space) {
+            rawInput = rawInput.replaceAll("'", "");
             System.out.println(rawInput.substring(5));
             return true;
         }
@@ -47,7 +48,7 @@ public class Main {
 
     public static class PwdCommand implements Command {
         @Override
-        public boolean execute(String[] tokens, String rawInput, ShellContext context) {
+        public boolean execute(String[] tokens, String rawInput, ShellContext context, String space) {
             System.out.println(context.currentDirectory);
             return true;
         }
@@ -55,7 +56,7 @@ public class Main {
 
     public static class CdCommand implements Command {
         @Override
-        public boolean execute(String[] tokens, String rawInput, ShellContext context) {
+        public boolean execute(String[] tokens, String rawInput, ShellContext context, String space) {
             if (tokens.length < 2 || tokens[1].equals("~")) {
                 context.currentDirectory = Paths.get(System.getenv("HOME"));
                 return true;
@@ -75,7 +76,7 @@ public class Main {
 
     public static class TypeCommand implements Command {
         @Override
-        public boolean execute(String[] tokens, String rawInput, ShellContext context) {
+        public boolean execute(String[] tokens, String rawInput, ShellContext context, String space) {
             if (tokens.length < 2) return true;
             String targetCommand = tokens[1];
 
@@ -94,8 +95,9 @@ public class Main {
         }
     }
 
-    public static void main(String[] args) {
+    static void main(String[] args) {
         ShellContext context = new ShellContext();
+        String space = " ";
 
         context.registry.put("exit", new ExitCommand());
         context.registry.put("echo", new EchoCommand());
@@ -118,7 +120,7 @@ public class Main {
                 Command command = context.registry.get(commandName);
 
                 if (command != null) {
-                    running = command.execute(tokens, input, context);
+                    running = command.execute(tokens, input, context, space);
                 } else {
                     executeExternalCommand(tokens, context);
                 }
